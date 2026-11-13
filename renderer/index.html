@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Agent Manager</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header id="topbar">
+      <div class="brand"><span class="logo">&#9670;</span> Agent Manager</div>
+      <div id="goal" class="goal empty" title="">
+        <span class="goal-label">GOAL</span>
+        <span id="goalText" class="goal-text"></span>
+        <span id="goalRepo" class="goal-repo"></span>
+        <span id="goalBadge" class="goal-badge hidden">&#10003; done</span>
+      </div>
+      <div class="seg" id="provider" role="group" aria-label="Provider for new workers">
+        <button type="button" data-p="claude">Claude</button>
+        <button type="button" data-p="codex">Codex</button>
+      </div>
+      <span id="masterState" class="badge none"></span>
+      <button type="button" id="startMaster" class="primary">Start master</button>
+    </header>
+
+    <div id="dockbar">
+      <span class="dock-label">Workers <span id="workerCount" class="count">0</span></span>
+      <div id="dock" class="dock"></div>
+    </div>
+
+    <main id="main">
+      <div id="termHost"></div>
+      <div id="winLayer"></div>
+    </main>
+  </div>
+
+  <script src="termkeys.js"></script>
+  <script src="termview.js"></script>
+  <script src="workers.js"></script>
+  <script src="view.js"></script>
+  <script src="mock.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
