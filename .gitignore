@@ -2,3 +2,4 @@ node_modules
 dist
 .agentmanager
 ref/
+shots/

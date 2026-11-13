@@ -11,7 +11,7 @@ let failed = 0;
 const check = (name, ok, extra) => { console.log((ok ? 'PASS ' : 'FAIL ') + name + (extra ? ' ' + extra : '')); if (!ok) failed++; };
 
 app.whenReady().then(async () => {
-  const win = new BrowserWindow({ width: 1280, height: 800, show: false, webPreferences: { contextIsolation: true } });
+  const win = new BrowserWindow({ width: 1280, height: 800, show: true, webPreferences: { contextIsolation: true } });
   await win.loadFile(path.join(__dirname, '..', '..', 'renderer', 'index.html'), { query: { mock: '1' } });
   const ev = (js) => win.webContents.executeJavaScript(js);
   const shot = async (n) => fs.writeFileSync(path.join(out, n + '.png'), (await win.webContents.capturePage()).toPNG());
@@ -46,7 +46,7 @@ app.whenReady().then(async () => {
   // real drag of a window header
   const box = await ev('(() => { const r = document.querySelector(\'.wwin[data-name="backend"] .whead\').getBoundingClientRect(); return {x: r.x + 60, y: r.y + 14, left: parseFloat(document.querySelector(\'.wwin[data-name="backend"]\').style.left)}; })()');
   win.webContents.sendInputEvent({ type: 'mouseDown', x: box.x, y: box.y, button: 'left', clickCount: 1 });
-  win.webContents.sendInputEvent({ type: 'mouseMove', x: box.x + 150, y: box.y + 60, button: 'left' });
+  for (let k = 1; k <= 5; k++) { win.webContents.sendInputEvent({ type: 'mouseMove', x: box.x + 30 * k, y: box.y + 12 * k, button: 'left' }); await sleep(30); }
   win.webContents.sendInputEvent({ type: 'mouseUp', x: box.x + 150, y: box.y + 60, button: 'left', clickCount: 1 });
   await sleep(150);
   const left2 = await ev('parseFloat(document.querySelector(\'.wwin[data-name="backend"]\').style.left)');
@@ -59,7 +59,7 @@ app.whenReady().then(async () => {
 
   // keyboard goes to the pty
   await ev('__ui.term.focus()');
-  for (const ch of 'seq 5') win.webContents.sendInputEvent({ type: 'char', keyCode: ch });
+  for (const ch of 'seq 5') { win.webContents.sendInputEvent({ type: 'keyDown', keyCode: ch }); win.webContents.sendInputEvent({ type: 'char', keyCode: ch }); win.webContents.sendInputEvent({ type: 'keyUp', keyCode: ch }); }
   win.webContents.sendInputEvent({ type: 'keyDown', keyCode: 'Return' });
   await sleep(300);
   check('typed command reaches terminal', (await ev('__ui.term.text()')).includes('5 of 5'));

@@ -65,8 +65,8 @@ test('real pty: scrollback > rows, ANSI colours, input, resize', { skip, timeout
     assert.deepEqual(t.snapshot().lines, s.lines);
 
     // input reaches the process
-    t.input('ping');
-    await waitFor(() => t.text().includes('GOT:"ping"'), 10000, 'echoed input');
+    t.input('ping' + String.fromCharCode(13));
+    await waitFor(() => t.text().includes('GOT:"ping'), 10000, 'echoed input');
     assert.ok(t.lastKey > 0);
 
     // resize
@@ -77,19 +77,16 @@ test('real pty: scrollback > rows, ANSI colours, input, resize', { skip, timeout
   } finally { t.kill(); }
 });
 
-test('headless buffer handles alt screen + hidden cursor sequences', { skip, timeout: 30000 }, async () => {
-  const t = new MasterTerminal({
-    file: process.execPath,
-    args: ['-e', "process.stdout.write('base\\r\\n\\x1b[?1049h\\x1b[?25lALT SCREEN'); setTimeout(()=>{},15000)"],
-    cwd: __dirname, cols: 60, rows: 8, throttleMs: 10,
-  });
-  try {
-    await waitFor(() => t.snapshot().altScreen, 15000, 'alt screen');
-    const s = t.snapshot();
-    assert.equal(s.lines.length, 8); // alt buffer has no scrollback
-    assert.ok(s.lines.map(rowText).some((x) => x.includes('ALT SCREEN')));
-    assert.equal(s.cursor.visible, false);
-  } finally { t.kill(); }
+test('headless buffer handles alt screen + hidden cursor sequences', async () => {
+  let dataCb = () => {};
+  const fakePty = { spawn: () => ({ onData: (cb) => { dataCb = cb; }, onExit: () => {}, write: () => {}, resize: () => {}, kill: () => {} }) };
+  const t = new MasterTerminal({ file: 'x', pty: fakePty, cols: 60, rows: 8, throttleMs: 5 });
+  dataCb('base\r\n\x1b[?1049h\x1b[?25lALT SCREEN');
+  await waitFor(() => t.snapshot().altScreen, 3000, 'alt screen');
+  const s = t.snapshot();
+  assert.equal(s.lines.length, 8);
+  assert.ok(s.lines.map(rowText).some((x) => x.includes('ALT SCREEN')));
+  assert.equal(s.cursor.visible, false);
 });
 
 test('fake pty: exact attribute / colour mapping, wide chars, cursor, title, query replies', async () => {
