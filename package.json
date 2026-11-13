@@ -1,0 +1,30 @@
+{
+  "name": "agent-manager",
+  "version": "0.1.0",
+  "description": "Agent Manager - Electron rebuild",
+  "main": "main/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "smoke": "electron . --smoke",
+    "test": "node --test \"test/*.test.js\"",
+    "dist": "electron-builder --win dir"
+  },
+  "dependencies": {
+    "@xterm/headless": "^5.5.0",
+    "node-pty": "^1.1.0"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "local.agentmanager",
+    "productName": "Agent Manager",
+    "directories": { "output": "dist" },
+    "files": ["main/**", "renderer/**", "bin/**", "assets/**", "package.json"],
+    "asarUnpack": ["node_modules/node-pty/**", "bin/**", "assets/**"],
+    "npmRebuild": false,
+    "win": { "target": ["dir"], "signAndEditExecutable": false }
+  }
+}

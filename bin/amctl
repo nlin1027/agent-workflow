@@ -1,0 +1,7 @@
+#!/bin/sh
+# amctl for POSIX-style shells (e.g. Git Bash, which does not run .cmd shims by bare name).
+dir=$(dirname "$0")
+if [ -n "$AGENTMANAGER_NODE" ]; then
+  ELECTRON_RUN_AS_NODE=1 exec "$AGENTMANAGER_NODE" "$dir/amctl.js" "$@"
+fi
+exec node "$dir/amctl.js" "$@"
