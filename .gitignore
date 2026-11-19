@@ -3,3 +3,9 @@ dist
 .agentmanager
 ref/
 shots/
+
+# Environment variables and local secrets
+.env
+.env.*
+!.env.example
+!.env.template

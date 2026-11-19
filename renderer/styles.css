@@ -78,8 +78,8 @@ button.primary:hover:not(:disabled) { filter: brightness(1.1); }
 
 /* ---- terminal projection ---- */
 .term { background: var(--term-bg); display: flex; flex-direction: column; }
-.term-scroll { flex: 1; min-height: 0; overflow-y: scroll; overflow-x: hidden; outline: none; padding: 4px 0 4px 10px; font: 14px/18px var(--mono); color: var(--term-fg); position: relative; cursor: text; user-select: text; font-variant-ligatures: none; }
-.term-rows .row { height: 18px; white-space: pre; overflow: hidden; }
+.term-scroll { flex: 1; min-height: 0; overflow-y: scroll; overflow-x: hidden; outline: none; padding: 4px 0 4px 10px; font: 14px/18px var(--mono); color: var(--term-fg); position: relative; cursor: text; user-select: text; font-variant-ligatures: none; overscroll-behavior: contain; scroll-behavior: auto; contain: layout paint; }
+.term-rows .row { height: 18px; white-space: pre; overflow: hidden; contain: strict; content-visibility: auto; contain-intrinsic-size: auto 18px; }
 .term-meter { position: absolute; visibility: hidden; white-space: pre; pointer-events: none; font: inherit; line-height: 18px; left: 0; top: 0; }
 .term .cur { background: var(--term-fg); color: var(--term-bg); }
 .term:not(.focused) .cur { background: transparent !important; color: inherit; outline: 1px solid var(--term-fg); outline-offset: -1px; }

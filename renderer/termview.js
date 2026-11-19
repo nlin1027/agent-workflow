@@ -133,10 +133,16 @@
 
     _bind() {
       const s = this.scroller;
+      let scrollQueued = false;
       s.addEventListener('scroll', () => {
-        this.stick = isAtBottom(s);
-        this.jump.classList.toggle('hidden', this.stick);
-      });
+        if (scrollQueued) return;
+        scrollQueued = true;
+        this.raf(() => {
+          scrollQueued = false;
+          this.stick = isAtBottom(s);
+          this.jump.classList.toggle('hidden', this.stick);
+        });
+      }, { passive: true });
       this.jump.addEventListener('click', () => { this.scrollToBottom(); this.focus(); });
       s.addEventListener('focus', () => this.host.classList.add('focused'));
       s.addEventListener('blur', () => this.host.classList.remove('focused'));
