@@ -146,7 +146,15 @@ if ($exe) {
     }
   }
   & ${psq(amctlCmd)} master-state idle
-  & $exe @argv ${extra.map(psq).join(' ')}
+  # npm's codex.cmd shim re-parses args through cmd.exe, which splits quoted values at spaces; call node directly.
+  $pre = @()
+  if ($exe -match '\\.(cmd|bat)$') {
+    $js = Join-Path (Split-Path $exe) 'node_modules\\@openai\\codex\\bin\\codex.js'
+    $node = Join-Path (Split-Path $exe) 'node.exe'
+    if (-not (Test-Path $node)) { $node = (Get-Command node -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1).Source }
+    if ($node -and (Test-Path $js)) { $exe = $node; $pre = @($js) }
+  }
+  & $exe @pre @argv ${extra.map(psq).join(' ')}
 }
 & ${psq(amctlCmd)} master-state exited
 ${CLEAR}`;
